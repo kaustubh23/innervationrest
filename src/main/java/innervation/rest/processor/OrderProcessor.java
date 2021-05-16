@@ -11,17 +11,20 @@ import innervation.rest.dto.Request;
 import innervation.rest.service.OrderService;
 
 @Component
-public class OrderProcessor implements Processor{
-	
+public class OrderProcessor implements Processor {
+
 	@Autowired
 	private OrderService service;
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
-		  String data = exchange.getIn().getBody(String.class);
-		  Request request = new ObjectMapper().readValue(data, Request.class);
+		String data = exchange.getIn().getBody(String.class);
+		Request request = new ObjectMapper().readValue(data, Request.class);
+		ObjectMapper mapper = new ObjectMapper();
+		// Converting the Object to JSONString
+		String jsonString = mapper.writeValueAsString(service.sendOrder(request));
+		exchange.getOut().setBody(jsonString);
 
-		service.sendOrder(request);
 	}
 
 }
